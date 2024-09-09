@@ -17,34 +17,66 @@ echo "MONGO_URI=mongodb://mongo:27017/mern_social" >> .env
 echo ".env file has been created/updated with the following content:"
 cat .env
 
-# Create frontend directory with placeholder Dockerfile and files
+# Create frontend directory with a simple React app
 mkdir -p frontend
 cat > frontend/Dockerfile <<EOL
 FROM node:14
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+RUN npm init -y && npm install react react-dom react-scripts
 COPY . .
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["npx", "react-scripts", "start"]
 EOL
 
-echo '{"name":"frontend","version":"1.0.0","scripts":{"start":"echo \"Frontend placeholder\" && sleep infinity"}}' > frontend/package.json
+cat > frontend/src/index.js <<EOL
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-# Create backend directory with placeholder Dockerfile and files
+ReactDOM.render(
+  <h1>Hello from Frontend!</h1>,
+  document.getElementById('root')
+);
+EOL
+
+cat > frontend/public/index.html <<EOL
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERN Social Frontend</title>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
+EOL
+
+# Create backend directory with a simple Express app
 mkdir -p backend
 cat > backend/Dockerfile <<EOL
 FROM node:14
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+RUN npm init -y && npm install express
 COPY . .
 EXPOSE 5000
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
 EOL
 
-echo '{"name":"backend","version":"1.0.0","scripts":{"start":"echo \"Backend placeholder\" && sleep infinity"}}' > backend/package.json
+cat > backend/server.js <<EOL
+const express = require('express');
+const app = express();
+const port = 5000;
 
-echo "Placeholder frontend and backend directories created."
+app.get('/', (req, res) => {
+  res.send('Hello from Backend!');
+});
+
+app.listen(port, () => {
+  console.log(\`Backend server running at http://localhost:\${port}\`);
+});
+EOL
+
+echo "Simple frontend and backend applications created."
 
 echo "Setup complete. You can now run 'docker-compose up --build' to start the application."

@@ -21,10 +21,10 @@ This project is a Dockerized version of a MERN social media app. It uses MongoDB
    ./setup.sh
    ```
    This script will:
+   - Clean up Docker
    - Prompt you for your EC2 public IP address
    - Create the necessary `.env` file
-   - Generate self-signed SSL certificates for HTTPS
-   - Update the `docker-compose.yml` file to use HTTPS
+   - Create placeholder frontend and backend directories
 
 3. Build and start the Docker containers:
    ```bash
@@ -32,69 +32,38 @@ This project is a Dockerized version of a MERN social media app. It uses MongoDB
    ```
 
 4. Open the application in your browser:
-   - Frontend: https://<YOUR_EC2_PUBLIC_IP>
-   - Backend API: https://<YOUR_EC2_PUBLIC_IP>:5000
-
-   Note: You may see a security warning in your browser because we're using a self-signed certificate. This is expected and you can proceed by accepting the risk.
+   - Frontend: http://<YOUR_EC2_PUBLIC_IP>:3000
+   - Backend API: http://<YOUR_EC2_PUBLIC_IP>:5000
 
 5. MongoDB is running on port 27017 (only accessible within the EC2 instance).
 
-## Setting up Nginx Proxy
+## Troubleshooting
 
-1. Install Nginx on your EC2 instance:
+If you encounter any issues, try the following steps:
+
+1. Stop all running containers:
    ```bash
-   sudo apt update
-   sudo apt install nginx
+   docker-compose down
    ```
 
-2. Create a new Nginx configuration file:
+2. Remove all stopped containers, networks, and volumes:
    ```bash
-   sudo nano /etc/nginx/sites-available/mern-social
+   docker system prune -a
    ```
 
-3. Add the following configuration:
-   ```nginx
-   server {
-       listen 80;
-       server_name your_domain.com;
-
-       location / {
-           proxy_pass http://localhost:3000;
-           proxy_http_version 1.1;
-           proxy_set_header Upgrade $http_upgrade;
-           proxy_set_header Connection 'upgrade';
-           proxy_set_header Host $host;
-           proxy_cache_bypass $http_upgrade;
-       }
-
-       location /api {
-           proxy_pass http://localhost:5000;
-           proxy_http_version 1.1;
-           proxy_set_header Upgrade $http_upgrade;
-           proxy_set_header Connection 'upgrade';
-           proxy_set_header Host $host;
-           proxy_cache_bypass $http_upgrade;
-       }
-   }
-   ```
-
-4. Create a symbolic link to enable the site:
+3. Remove all Docker volumes:
    ```bash
-   sudo ln -s /etc/nginx/sites-available/mern-social /etc/nginx/sites-enabled
+   docker volume prune
    ```
 
-5. Test the Nginx configuration:
+4. Run the setup script again:
    ```bash
-   sudo nginx -t
+   ./setup.sh
    ```
 
-6. If the test is successful, restart Nginx:
+5. Rebuild and start the containers:
    ```bash
-   sudo systemctl restart nginx
+   docker-compose up --build
    ```
 
-7. Update your application to use the new URLs:
-   - Frontend: http://your_domain.com
-   - Backend API: http://your_domain.com/api
-
-Remember to replace `your_domain.com` with your actual domain name or EC2 public IP address.
+If problems persist, please check your Docker and Docker Compose versions and ensure they are up to date.

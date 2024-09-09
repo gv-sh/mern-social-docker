@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Clean up Docker
+echo "Cleaning up Docker..."
+docker-compose down -v
+docker system prune -af
+docker volume prune -f
+
 # Prompt for EC2 public IP
 echo "Please enter your EC2 public IP address:"
 read ec2_public_ip

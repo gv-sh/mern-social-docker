@@ -17,8 +17,11 @@ echo "MONGO_URI=mongodb://mongo:27017/mern_social" >> .env
 echo ".env file has been created/updated with the following content:"
 cat .env
 
-# Create frontend directory with a simple React app
-mkdir -p frontend
+# Copy the package.json from the root of the repo
+cp package.json ./package.json
+
+# Create frontend directory
+mkdir -p frontend/src frontend/public
 cat > frontend/Dockerfile <<EOL
 FROM node:14
 WORKDIR /app
@@ -26,35 +29,7 @@ COPY package.json .
 RUN npm install
 COPY . .
 EXPOSE 3000
-CMD ["npm", "start"]
-EOL
-
-# Create package.json for frontend
-cat > frontend/package.json <<EOL
-{
-  "name": "frontend",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "react-scripts start"
-  },
-  "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
-}
+CMD ["npm", "run", "start:frontend"]
 EOL
 
 cat > frontend/src/index.js <<EOL
@@ -81,7 +56,7 @@ cat > frontend/public/index.html <<EOL
 </html>
 EOL
 
-# Create backend directory with a simple Express app
+# Create backend directory
 mkdir -p backend
 cat > backend/Dockerfile <<EOL
 FROM node:14
@@ -90,22 +65,7 @@ COPY package.json .
 RUN npm install
 COPY . .
 EXPOSE 5000
-CMD ["node", "server.js"]
-EOL
-
-# Create package.json for backend
-cat > backend/package.json <<EOL
-{
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.17.1"
-  }
-}
+CMD ["npm", "run", "start:backend"]
 EOL
 
 cat > backend/server.js <<EOL
@@ -122,6 +82,6 @@ app.listen(port, () => {
 });
 EOL
 
-echo "Simple frontend and backend applications created."
+echo "Frontend and backend directories created with shared package.json."
 
 echo "Setup complete. You can now run 'docker-compose up --build' to start the application."

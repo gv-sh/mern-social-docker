@@ -1,42 +1,35 @@
-version: '3.8'
+version: '3'
 
 services:
-  mongodb:
-    image: mongo:4.2.0
-    restart: unless-stopped
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
-    ports:
-      - "27017:27017"
-    volumes:
-      - db:/data/db
-
-  backend:
-    build: ./server
-    ports:
-      - "5000:5000"
-    environment:
-      - DB_HOST=mongodb
-      - DB_USER=root
-      - DB_PASS=example
-    depends_on:
-      - mongodb
-    volumes:
-      - ./server:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run development
-
   frontend:
-    build: ./client
+    build: ./frontend
     ports:
-      - "3000:3000"
+      - "443:3000"
+    environment:
+      - REACT_APP_API_URL=https://${EC2_PUBLIC_IP}:5000
     depends_on:
       - backend
     volumes:
-      - ./client:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm start
+      - ./ssl:/app/ssl:ro
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - CORS_ORIGIN=https://${EC2_PUBLIC_IP}:443
+    depends_on:
+      - mongo
+    volumes:
+      - ./ssl:/app/ssl:ro
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
 
 volumes:
-  db:
+  mongo-data:

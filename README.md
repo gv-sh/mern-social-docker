@@ -15,33 +15,29 @@ This project is a Dockerized version of a MERN social media app. It uses MongoDB
    cd mern-social-docker
    ```
 
-2. Create a `.env` file in the root directory and add your EC2 public IP:
+2. Run the setup script:
+   ```bash
+   chmod +x setup.sh
+   ./setup.sh
    ```
-   EC2_PUBLIC_IP=your_ec2_public_ip_here
-   ```
+   This script will:
+   - Prompt you for your EC2 public IP address
+   - Create the necessary `.env` file
+   - Generate self-signed SSL certificates for HTTPS
+   - Update the `docker-compose.yml` file to use HTTPS
 
-3. Update the `docker-compose.yml` file to use the environment variable:
-   ```yaml
-   version: '3'
-   services:
-     frontend:
-       environment:
-         - REACT_APP_API_URL=http://${EC2_PUBLIC_IP}:5000
-     backend:
-       environment:
-         - CORS_ORIGIN=http://${EC2_PUBLIC_IP}:3000
-   ```
-
-4. Build and start the Docker containers:
+3. Build and start the Docker containers:
    ```bash
    docker-compose up --build
    ```
 
-5. Open the application in your browser:
-   - Frontend: http://<YOUR_EC2_PUBLIC_IP>:3000
-   - Backend API: http://<YOUR_EC2_PUBLIC_IP>:5000
+4. Open the application in your browser:
+   - Frontend: https://<YOUR_EC2_PUBLIC_IP>
+   - Backend API: https://<YOUR_EC2_PUBLIC_IP>:5000
 
-6. MongoDB is running on port 27017 (only accessible within the EC2 instance).
+   Note: You may see a security warning in your browser because we're using a self-signed certificate. This is expected and you can proceed by accepting the risk.
+
+5. MongoDB is running on port 27017 (only accessible within the EC2 instance).
 
 ## Setting up Nginx Proxy
 

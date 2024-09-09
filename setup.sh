@@ -28,4 +28,34 @@ sed -i 's/http:\/\/${EC2_PUBLIC_IP}:3000/https:\/\/${EC2_PUBLIC_IP}:443/' docker
 
 echo "docker-compose.yml updated to use HTTPS."
 
+# Create frontend directory with placeholder Dockerfile and files
+mkdir -p frontend
+cat > frontend/Dockerfile <<EOL
+FROM node:14
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+EOL
+
+echo '{"name":"frontend","version":"1.0.0","scripts":{"start":"echo \"Frontend placeholder\" && sleep infinity"}}' > frontend/package.json
+
+# Create backend directory with placeholder Dockerfile and files
+mkdir -p backend
+cat > backend/Dockerfile <<EOL
+FROM node:14
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5000
+CMD ["npm", "start"]
+EOL
+
+echo '{"name":"backend","version":"1.0.0","scripts":{"start":"echo \"Backend placeholder\" && sleep infinity"}}' > backend/package.json
+
+echo "Placeholder frontend and backend directories created."
+
 echo "Setup complete. You can now run 'docker-compose up --build' to start the application."

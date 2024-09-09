@@ -15,21 +15,19 @@ This project is a Dockerized version of a MERN social media app. It uses MongoDB
    cd mern-social-docker
    ```
 
-2. Run the setup script:
+2. Ensure that the Dockerfiles are present:
+   - `client/Dockerfile` for the frontend
+   - `server/Dockerfile` for the backend
+
+3. Run the setup script:
    ```bash
    chmod +x setup.sh
    ./setup.sh
    ```
    This script will:
-   - Clean up Docker
    - Prompt you for your EC2 public IP address
    - Create the necessary `.env` file
-   - Create placeholder frontend and backend directories
-
-3. Build and start the Docker containers:
-   ```bash
-   docker-compose up --build
-   ```
+   - Build and start the Docker containers using the existing Dockerfiles
 
 4. Open the application in your browser:
    - Frontend: http://<YOUR_EC2_PUBLIC_IP>

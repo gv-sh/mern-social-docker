@@ -22,10 +22,39 @@ mkdir -p frontend
 cat > frontend/Dockerfile <<EOL
 FROM node:14
 WORKDIR /app
-RUN npm init -y && npm install react react-dom react-scripts
+COPY package.json .
+RUN npm install
 COPY . .
 EXPOSE 3000
-CMD ["npx", "react-scripts", "start"]
+CMD ["npm", "start"]
+EOL
+
+# Create package.json for frontend
+cat > frontend/package.json <<EOL
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "react-scripts start"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
 EOL
 
 cat > frontend/src/index.js <<EOL
@@ -57,10 +86,26 @@ mkdir -p backend
 cat > backend/Dockerfile <<EOL
 FROM node:14
 WORKDIR /app
-RUN npm init -y && npm install express
+COPY package.json .
+RUN npm install
 COPY . .
 EXPOSE 5000
 CMD ["node", "server.js"]
+EOL
+
+# Create package.json for backend
+cat > backend/package.json <<EOL
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
 EOL
 
 cat > backend/server.js <<EOL

@@ -32,8 +32,8 @@ This project is a Dockerized version of a MERN social media app. It uses MongoDB
    ```
 
 4. Open the application in your browser:
-   - Frontend: http://<YOUR_EC2_PUBLIC_IP>:3000
-   - Backend API: http://<YOUR_EC2_PUBLIC_IP>:5000
+   - Frontend: http://<YOUR_EC2_PUBLIC_IP>
+   - Backend API: http://<YOUR_EC2_PUBLIC_IP>:8081
 
 5. MongoDB is running on port 27017 (only accessible within the EC2 instance).
 
@@ -67,3 +67,7 @@ If you encounter any issues, try the following steps:
    ```
 
 If problems persist, please check your Docker and Docker Compose versions and ensure they are up to date.
+
+## Security Note
+
+Running the frontend on port 80 (HTTP) is not secure for production use. For a production environment, you should set up HTTPS using a reverse proxy like Nginx and obtain an SSL/TLS certificate (e.g., using Let's Encrypt).
